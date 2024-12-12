@@ -66,13 +66,13 @@ class MainActivity : AppCompatActivity() {
         addToBoard(view)
 
         if(checkForVictory(NOUGHT)) {
-            result("Nought won")
             noughtScore++
+            result("Nought won")
         }
 
         if(checkForVictory(CROSS)) {
-            result("Cross won")
             crossesScore++
+            result("Cross won")
         }
 
         if (fullBoard()) {
