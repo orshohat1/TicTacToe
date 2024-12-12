@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,6 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     private var firstTurn = Turn.CROSS
     private var currentTurn = Turn.CROSS
+
+    private var crossesScore = 0
+    private var noughtScore = 0
 
     private var boardList = mutableListOf<Button>()
     private lateinit var binding : ActivityMainBinding
@@ -48,10 +52,90 @@ class MainActivity : AppCompatActivity() {
         boardList.add(binding.c3)
     }
 
+    private fun fullBoard(): Boolean {
+        for(button in boardList) {
+            if(button.text == "")
+                return false
+        }
+        return true
+    }
+
     fun boardTapped(view: View) {
         if(view !is Button)
             return
         addToBoard(view)
+
+        if(checkForVictory(NOUGHT)) {
+            result("Nought won")
+            noughtScore++
+        }
+
+        if(checkForVictory(CROSS)) {
+            result("Cross won")
+            crossesScore++
+        }
+
+        if (fullBoard()) {
+            result("Draw")
+        }
+    }
+
+    private fun checkForVictory(s: String): Boolean {
+
+        // vertical
+        if(match(binding.a1,s) && match(binding.b1,s) && match(binding.c1,s))
+            return true
+        if(match(binding.a2,s) && match(binding.b2,s) && match(binding.c2,s))
+            return true
+        if(match(binding.a3,s) && match(binding.b3,s) && match(binding.c3,s))
+            return true
+
+        // horizontal
+        if(match(binding.a1,s) && match(binding.a2,s) && match(binding.a3,s))
+            return true
+        if(match(binding.b1,s) && match(binding.b2,s) && match(binding.b3,s))
+            return true
+        if(match(binding.c1,s) && match(binding.c2,s) && match(binding.c3,s))
+            return true
+
+        // /
+        if(match(binding.a1,s) && match(binding.b2,s) && match(binding.c3,s))
+            return true
+        if(match(binding.a3,s) && match(binding.b2,s) && match(binding.c1,s))
+            return true
+
+        return false
+    }
+
+    private fun match(button: Button, symbol: String) = button.text == symbol
+
+    private fun result(title: String) {
+
+        val message = "\nNought $noughtScore\nCross $crossesScore"
+
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Reset")
+            {_,_ ->
+                resetBoard()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun resetBoard() {
+        for(button in boardList) {
+            button.text = ""
+        }
+
+        if(firstTurn == Turn.NOUGHT)
+            firstTurn = Turn.CROSS
+        else if(firstTurn == Turn.CROSS)
+            firstTurn = Turn.NOUGHT
+
+        currentTurn = firstTurn
+        setTurnLabel()
     }
 
     private fun addToBoard(button: Button) {
