@@ -67,16 +67,16 @@ class MainActivity : AppCompatActivity() {
 
         if(checkForVictory(NOUGHT)) {
             noughtScore++
-            result("Nought won")
+            result("$NOUGHT won")
         }
 
         if(checkForVictory(CROSS)) {
             crossesScore++
-            result("Cross won")
+            result("$CROSS won")
         }
 
         if (fullBoard()) {
-            result("Draw")
+            result("Draw. Play again!")
         }
     }
 
@@ -111,12 +111,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun result(title: String) {
 
-        val message = "\nNought $noughtScore\nCross $crossesScore"
+        val message = "\n$NOUGHT score: $noughtScore\n$CROSS score: $crossesScore"
 
         AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(message)
-            .setPositiveButton("Reset")
+            .setPositiveButton("Reset Game")
             {_,_ ->
                 resetBoard()
             }
